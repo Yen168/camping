@@ -1,6 +1,8 @@
 class MissingLibrary < Exception #:nodoc: all
 end
 begin
+    gem 'activerecord', '=4.0.0'
+    # ac problem fixed
     require 'active_record'
 rescue LoadError => e
     raise MissingLibrary, "ActiveRecord could not be loaded (is it installed?): #{e.message}"
@@ -8,6 +10,21 @@ end
 
 $AR_EXTRAS = %{
   Base = ActiveRecord::Base unless const_defined? :Base
+
+  # class ActiveRecordCloser
+  #   def initialize(app)
+  #     @app = app
+  #   end
+
+  #   def call(env)
+  #     @app.call(env)
+  #   ensure
+  #     conn = ActiveRecord::Base.connection
+  #     conn.close if conn.respond_to?(:close)
+  #   end
+  # end
+
+  # Camping.use ActiveRecordCloser
 
   class SchemaInfo < Base
   end
